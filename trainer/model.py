@@ -1,4 +1,5 @@
 import tensorflow as tf
+tf = tf.compat.v1
 from trainer.helpers import bbox_overlap_iou, to_bbox_tf
 
 Layers = tf.keras.layers
@@ -127,7 +128,7 @@ def model_fn(features, labels, mode, params, config):
         loss = conf_loss + dist_loss
 
         # optimizer
-        optimizer = tf.train.AdamOptimizer(learning_rate=params["LEARNING_RATE"])
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate=params["LEARNING_RATE"])
 
         # define metrics
         predictions = to_bbox_tf(x=features, y=predictions, batch=True)
@@ -185,7 +186,7 @@ def model_fn(features, labels, mode, params, config):
 
 
 def get_dataset(gen=None,
-                data_path="/Users/kanchana/Documents/current/FYP/data/KITTI_tracking/generate/tracks.json",
+                data_path="/home/dark/Documents/GitHub/lstm_tracker/data/KITTI_tracking/generate/tracks.json",
                 mode="train",
                 num_classes=9,
                 num_epochs=100,

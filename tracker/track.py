@@ -38,7 +38,7 @@ class Track:
 
     """
 
-    def __init__(self, start_pos, num_classes, track_id, iou_thresh=0.5, time_steps=10):
+    def __init__(self, start_pos, num_classes, track_id, iou_thresh=0.2, time_steps=10):
         self.pos_data = np.zeros(shape=(time_steps, 4 + num_classes))
         self.pos_data[-1, :] = start_pos
         self.track_id = track_id

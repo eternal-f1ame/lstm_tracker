@@ -1,11 +1,11 @@
 import numpy as np
 import tensorflow as tf
-
+# tf = tf.compat.v1
 from trainer.data import joint_data_gen
 from trainer.model import model_fn
 
 _PARAMS = {
-    'Eval_IOU': 0.5,
+    'Eval_IOU': 0.1,
     'output_bins': 5,
     'hidden layers': [32, 32],
     'num_classes': 9,

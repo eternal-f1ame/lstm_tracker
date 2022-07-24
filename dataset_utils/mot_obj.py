@@ -46,3 +46,5 @@ class MOTObj(BaseObject):
                    frame=int(line[0]),
                    track=int(line[1])
                    )
+
+

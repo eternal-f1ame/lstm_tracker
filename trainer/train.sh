@@ -1,5 +1,5 @@
 ROOT_PATH=$1
-CODE_HOME=$ROOT_PATH/fyp_2019/LSTM_Kanchana
+CODE_HOME=$ROOT_PATH
 PYTHONPATH=PYTHONPATH:$CODE_HOME
 export PYTHONPATH
 python train.py \
@@ -8,5 +8,5 @@ python train.py \
     --job_dir $CODE_HOME/models/exp04 \
     --lr 0.001 \
     --batch 128 \
-    --epochs 1000 \
+    --epochs 10000 \
     --eval_int 300

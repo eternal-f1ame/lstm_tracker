@@ -3,6 +3,7 @@ from collections import defaultdict
 
 import numpy as np
 import tensorflow as tf
+tf = tf.compat.v1
 from matplotlib import pyplot as plt, patches
 
 from dataset_utils.kitti_datum import KITTIDataset
@@ -12,8 +13,8 @@ from vis_utils.vis_datum import ImageBoxes
 
 
 def init_track_json(kind="KITTI",
-                    path="/Users/kanchana/Documents/current/FYP/data/KITTI_tracking/data_tracking_image_2/training",
-                    o_path="/Users/kanchana/Documents/current/FYP/data/KITTI_tracking/generate/tracks.json"):
+                    path="/home/dark/Documents/GitHub/lstm_tracker/data/KITTI_tracking/data_tracking_image_2/training",
+                    o_path="/home/dark/Documents/GitHub/lstm_tracker/data/KITTI_tracking/generate/tracks.json"):
     if kind == "KITTI":
         dataset = KITTIDataset(path)
     elif kind == "MOT":
@@ -47,21 +48,21 @@ def init_track_json(kind="KITTI",
 
 
 def run_init():
-    base_path = "/Users/kanchana/Documents/current/FYP/"
+    base_path = "/home/dark/Documents/GitHub/lstm_tracker"
 
     init_track_json(
         kind="KITTI",
         path="{}/data/KITTI_tracking/data_tracking_image_2/training".format(base_path),
-        o_path="{}/fyp_2019/LSTM_Kanchana/data/kitti_tracks_{}.json".format(base_path, "{}")
+        o_path="{}/data/kitti_tracks_{}.json".format(base_path, "{}")
     )
     init_track_json(
         kind="MOT",
         path="{}/data/MOT16/train".format(base_path),
-        o_path="{}/fyp_2019/LSTM_Kanchana/data/mot_tracks_{}.json".format(base_path, "{}")
+        o_path="{}/data/mot_tracks_{}.json".format(base_path, "{}")
     )
 
 
-def kitti_data_gen(path="/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana/data/kitti_tracks_{}.json",
+def kitti_data_gen(path="/home/dark/Documents/GitHub/lstm_tracker/data/kitti_tracks_{}.json",
                    split="train", testing=False, one_hot_classes=False, anchors=False, num_classes=9):
     """
 
@@ -133,7 +134,7 @@ def kitti_data_gen(path="/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kan
                 yield (x, y)
 
 
-def mot_data_gen(path="/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana/data/mot_tracks_{}.json",
+def mot_data_gen(path="/home/dark/Documents/GitHub/lstm_tracker/data/mot_tracks_{}.json",
                  split="train", testing=False, one_hot_classes=False, anchors=False, num_classes=9):
     """
 
@@ -221,8 +222,7 @@ def make_anchors(val, anchor_centres=(-0.5, 0, 0.1, 0.2, 0.5)):
     return np.concatenate((conf, dist), axis=0)
 
 
-def joint_data_gen(paths=("/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana/data/kitti_tracks_{}.json",
-                          "/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana/data/mot_tracks_{}.json"),
+def joint_data_gen(paths=("/home/dark/Documents/GitHub/lstm_tracker/data/kitti_tracks_{}.json","/home/dark/Documents/GitHub/lstm_tracker/data/mot_tracks_{}.json",),
                    split="train", num_classes=9, anchors=True, one_hot_classes=True):
     """
 
@@ -244,14 +244,22 @@ def joint_data_gen(paths=("/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_K
         split = split.decode()
     assert split in ["train", "val"], "invalid split type: {}".format(split)
 
-    gens = (kitti_data_gen, mot_data_gen)
+    gens = (kitti_data_gen,mot_data_gen)
     gens = [gen(path=path, split=split) for gen, path in zip(gens, paths)]
     while True:
         a = np.random.choice(range(4))  # MOT has over 3 times tracks as KITTI
         if a < 1:
-            x, y = next(gens[1])
+            try:
+                x, y = next(gens[1])
+            except StopIteration:
+                gens[1] = mot_data_gen(path=paths[1], split=split)
+                x, y = next(gens[1])
         else:
-            x, y = next(gens[0])
+            try:
+                x, y = next(gens[0])
+            except StopIteration:
+                gens[0] = kitti_data_gen(path=paths[0], split=split)
+                x, y = next(gens[0])
 
         if one_hot_classes:
             temp = np.zeros(shape=(x.shape[0], num_classes))
@@ -270,8 +278,8 @@ def joint_data_gen(paths=("/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_K
         yield x, y
 
 
-def val_data_gen(paths=("/Users/kanchana/Documents/current/FYP/data/KITTI_tracking/generate/tracks.json",
-                        "/Users/kanchana/Documents/current/FYP/data/MOT16/generate/tracks.json"),
+def val_data_gen(paths=("/home/dark/Documents/GitHub/lstm_tracker/data/KITTI_tracking/generate/tracks.json",
+                        "/home/dark/Documents/GitHub/lstm_tracker/data/MOT16/generate/tracks.json"),
                  split="train", num_classes=9):
     """
     Method to return images for validation data gen.
@@ -321,3 +329,6 @@ def vis_gen(auto_time=False):
         else:
             plt.waitforbuttonpress()
         plt.close()
+
+if __name__ == "__main__":
+    vis_gen()

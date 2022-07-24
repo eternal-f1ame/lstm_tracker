@@ -2,14 +2,14 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 
 from evaluater.graph_runner import GraphRunner
-from tracker.track import Track, _NO_MATCH
+from tracker.track import Track, _NO_MATCH, _MATCHED, _NEW
 from trainer.helpers import bbox_cross_overlap_iou_np
 from vis_utils.vis_utils import draw_bounding_box_on_image
 
 LSTM_INFO = (
-    "/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana",
-    "exp02",
-    "model.ckpt-109169"
+    "/home/dark/Documents/GitHub/lstm_tracker",
+    "exp04",
+    "model.ckpt-645257"
 )
 
 
@@ -42,7 +42,7 @@ class Tracker:
         Number of time steps
     """
 
-    def __init__(self, lstm_info=LSTM_INFO, min_iou_distance=0.5, num_classes=9, time_steps=10, max_no_hit=6):
+    def __init__(self, lstm_info=LSTM_INFO, min_iou_distance=0.2, num_classes=9, time_steps=10, max_no_hit=6):
 
         self.predictor = GraphRunner(
             base_path=lstm_info[0],
@@ -92,6 +92,7 @@ class Tracker:
         # Find valid matches and update tracks
         for det_idx, pred_idx in zip(row_ind, col_ind):
             iou = iou_matrix[det_idx, pred_idx]
+            # print(iou)
             if iou > self.min_iou_distance:
                 self.tracks[pred_idx].update(detections[det_idx], predictions[pred_idx], iou)
             else:
@@ -149,9 +150,16 @@ class Tracker:
 
             if track.state == _NO_MATCH:
                 continue
-
+            
+                
             box = track.to_tlbr()[-1, :4]  # ymin, xmin, ymax, xmax
             assert box.shape == (4,), "invalid shape: {}".format(box.shape)
 
-            draw_bounding_box_on_image(image, box[0], box[1], box[2], box[3],
-                                       display_str_list=["{:02d}".format(track.track_id)])
+            if track.state == _MATCHED:
+
+                draw_bounding_box_on_image(image, box[0], box[1], box[2], box[3],
+                                       display_str_list=["{:02d}_Matched".format(track.track_id)])
+            if track.state == _NEW:
+
+                draw_bounding_box_on_image(image, box[0], box[1], box[2], box[3],
+                                       display_str_list=["{:02d}_New".format(track.track_id)])

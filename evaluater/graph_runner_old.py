@@ -1,6 +1,7 @@
 from trainer.model import create_model
 from trainer.helpers import to_bbox_tf
 import tensorflow as tf
+tf = tf.compat.v1
 import numpy as np
 
 

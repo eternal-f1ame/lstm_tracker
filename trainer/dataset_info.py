@@ -15,4 +15,3 @@ kitti_classes_reverse = {'car': 1,
                          'tram': 6,
                          'truck': 7,
                          'van': 8}
-

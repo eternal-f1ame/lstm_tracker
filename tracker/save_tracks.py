@@ -32,11 +32,11 @@ def get_boxes_from_datum(dat, kitti=True):
 ious = []
 pbar = tqdm()
 
-BASE_PATH = "/Users/kanchana/Documents/current/FYP/"
+BASE_PATH = "/home/dark/Documents/GitHub/lstm_tracker"
 dataset = KITTIDataset(root_path="{}/data/KITTI_tracking/data_tracking_image_2/training".format(BASE_PATH))
 # dataset = MOTDataset(root_path="{}/data/MOT16/train".format(BASE_PATH))
 
-save_path = "{}/fyp_2019/LSTM_Kanchana/data/results/{}/{}".format(BASE_PATH, "KITTI", "{}.txt")
+save_path = "{}/data/results/{}/{}".format(BASE_PATH, "KITTI", "{}.txt")
 
 seq = dataset.sequences[6]
 

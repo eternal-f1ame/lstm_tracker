@@ -2,6 +2,7 @@ import argparse
 import os
 
 import tensorflow as tf
+tf = tf.compat.v1
 
 from trainer.helpers import get_logging_tensor_hook
 from trainer.model import model_fn, get_dataset
@@ -12,11 +13,11 @@ def parse_args():
     """Parse input arguments."""
     parser = argparse.ArgumentParser(description='train_network')
     parser.add_argument('--data_path1', dest='data_path1', help='path to data JSON',
-                        default="/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana/data/kitti_tracks_{}.json")
+                        default="/home/dark/Documents/GitHub/lstm_tracker/data/kitti_tracks_{}.json")
     parser.add_argument('--data_path2', dest='data_path2', help='path to data JSON',
-                        default="/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana/data/mot_tracks_{}.json")
+                        default="/home/dark/Documents/GitHub/lstm_tracker/data/mot_tracks_{}.json")
     parser.add_argument('--job_dir', dest='output_dir', help='model output directory',
-                        default="/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana/models/exp04")
+                        default="/home/dark/Documents/GitHub/lstm_tracker/models/exp04")
     parser.add_argument('--lr', dest='lr', help='learning rate', default='0.001')
     parser.add_argument('--batch', dest='batch', help='batch size', default='64')
     parser.add_argument('--epochs', dest='epochs', help='num epochs', default='1000')
@@ -62,7 +63,7 @@ def main(_):
         config=run_config,
         params={
             'LEARNING_RATE': float(args.lr),
-            'Eval_IOU': 0.5,
+            'Eval_IOU': 0.1,
             'output_bins': 5,
             'hidden layers': [32, 32],
             'num_classes': 9,
@@ -75,13 +76,19 @@ def main(_):
     tf.logging.set_verbosity(tf.logging.INFO)
 
     # train and eval
-    train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, hooks=hooks)
+    train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, hooks=hooks,max_steps=1000000)
     eval_spec = tf.estimator.EvalSpec(input_fn=val_input_fn, steps=None, throttle_secs=int(args.eval_int),
                                       hooks=val_hooks)
 
-    tf.estimator.train_and_evaluate(estimator=classifier,
-                                    train_spec=train_spec,
-                                    eval_spec=eval_spec)
+    # tf.estimator.train_and_evaluate(estimator=classifier,
+    #                                 train_spec=train_spec,
+    #                                 eval_spec=eval_spec)
+
+    classifier.train(
+        train_input_fn
+    )
+                        
+                                
 
     # classifier.evaluate(input_fn=val_input_fn, steps=None, hooks=hooks, name='final_eval')
 

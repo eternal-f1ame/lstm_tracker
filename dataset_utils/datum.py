@@ -7,7 +7,6 @@ from PIL import Image
 
 from dataset_utils.label_obj import BaseObject
 
-
 class Datum(object):
     """
     This is an abstraction of one observation (an image with groundtruth labels and other data) in a dataset like KITTI.

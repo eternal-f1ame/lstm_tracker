@@ -2,7 +2,6 @@ import numpy as np
 
 from dataset_utils.datum import Datum
 
-
 class Dataset(object):
     def __init__(self, root_path, datum_class=None):
         # Public properties

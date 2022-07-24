@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
+tf = tf.compat.v1
 from matplotlib import pyplot as plt
+
 
 from trainer.data import kitti_data_gen, mot_data_gen
 from vis_utils.vis_datum import ImageBoxes
@@ -155,9 +157,10 @@ def bbox_overlap_iou_np(bboxes1, bboxes2, ar=False, iou_thresh=False):
         Tensor with shape (total_bboxes1,) with the IoU (intersection over union) between bboxes1[i] and bboxes2[i] in
         position [i, j] of output vector tensor.
     """
-
-    x1, y1, h1, w1 = np.split(bboxes1, 4, axis=1)
-    x2, y2, h2, w2 = np.split(bboxes2, 4, axis=1)
+    print(bboxes1)
+    print(bboxes2)
+    x1, y1, h1, w1 = np.split(np.squeeze(bboxes1), 4, axis=0)
+    x2, y2, h2, w2 = np.split(np.squeeze(bboxes2), 4, axis=0)
     if ar:
         w1 = h1 / w1
         w2 = h2 / w2

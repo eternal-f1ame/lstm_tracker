@@ -1,10 +1,11 @@
 import tensorflow as tf
+tf = tf.compat.v1
 import numpy as np
 
 from trainer.data import joint_data_gen
 from trainer.model import model_fn
 
-BASE_PATH = "/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana"
+BASE_PATH = "/home/dark/Documents/GitHub/lstm_tracker"
 model_dir = "{}/models/exp02".format(BASE_PATH)
 
 

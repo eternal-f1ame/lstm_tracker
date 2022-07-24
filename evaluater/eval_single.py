@@ -1,15 +1,19 @@
 import numpy as np
 from tqdm import tqdm
-
+import tensorflow as tf
+tf=tf.compat.v1
+tf.logging.set_verbosity(tf.logging.ERROR)
 from evaluater.graph_runner import GraphRunner
+runner = GraphRunner(base_path='/home/dark/Documents/GitHub/lstm_tracker',experiment='exp04',checkpoint="model.ckpt-3363",model_params={'Eval_IOU': 0.5, 'output_bins': 5, 'hidden layers': [32, 32], 'num_classes': 9, 'num_timesteps': 10})
 from trainer.data import kitti_data_gen
 from trainer.helpers import bbox_overlap_iou_np, lbtr_to_chw, to_one_hot
 
 from trainer.dataset_info import kitti_classes_reverse
 
 from dataset_utils.kitti_datum import KITTIDataset
-
-BASE_PATH = "/Users/kanchana/Documents/current/FYP/fyp_2019/LSTM_Kanchana"
+import warnings
+warnings.filterwarnings("ignore")
+BASE_PATH = "/home/dark/Documents/GitHub/lstm_tracker"
 
 gen = kitti_data_gen(path="{}/data/kitti_tracks_{}.json".format(BASE_PATH, "{}"),
                      split='val', testing=True, one_hot_classes=True, anchors=False)
@@ -17,7 +21,7 @@ gen = kitti_data_gen(path="{}/data/kitti_tracks_{}.json".format(BASE_PATH, "{}")
 ious = []
 pbar = tqdm()
 
-BASE_PATH = "/Users/kanchana/Documents/current/FYP/"
+BASE_PATH = "/home/dark/Documents/GitHub/lstm_tracker"
 dataset = KITTIDataset(root_path="{}/data/KITTI_tracking/data_tracking_image_2/training".format(BASE_PATH))
 seq = dataset.sequences[0]
 dat = seq.random_datum()

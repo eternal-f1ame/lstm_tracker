@@ -1,5 +1,5 @@
-ROOT_PATH=/home/ubuntu/repo/tests
-CODE_HOME=$ROOT_PATH/fyp_2019/LSTM_Kanchana
+ROOT_PATH=$1
+CODE_HOME=$ROOT_PATH
 PYTHONPATH=PYTHONPATH:$CODE_HOME
 export PYTHONPATH
 python eval_single.py
