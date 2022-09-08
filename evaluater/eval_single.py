@@ -51,10 +51,12 @@ for idx, dat in enumerate(seq.datums()):
 
         pbar.update(1)
 
-    for i in range(len(y_frame)):
+    for i,_ in enumerate(y_frame):
         iou_frame_intmd = []
-        for j in range(len(ypred_frame)):
-            iou_frame_intmd.append(bbox_overlap_iou_np(np.expand_dims(y_frame[i][:4], axis=0), np.expand_dims(ypred_frame[j][:4], axis=0)).ravel()[0])
+        for j,_ in enumerate(ypred_frame):
+            iou_frame_intmd.append(
+                bbox_overlap_iou_np(np.expand_dims(y_frame[i][:4], axis=0),
+                np.expand_dims(ypred_frame[j][:4], axis=0)).ravel()[0])
         iou_frame.append(iou_frame_intmd)
     ious.append(str(i_frame)+"\n"+str(np.array(iou_frame))+"\n")
 

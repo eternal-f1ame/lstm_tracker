@@ -42,7 +42,9 @@ class Tracker:
         Number of time steps
     """
 
-    def __init__(self, lstm_info=LSTM_INFO, min_iou_distance=0.1, num_classes=9, time_steps=10, max_no_hit=6):
+    def __init__(
+        self, lstm_info=LSTM_INFO, min_iou_distance=0.1,num_classes=9, time_steps=10, max_no_hit=6
+        ):
 
         self.predictor = GraphRunner(
             base_path=lstm_info[0],
@@ -57,7 +59,8 @@ class Tracker:
         self.max_no_hit = max_no_hit
 
     def predict(self):
-        """Obtain the next prediction from each track. Returns an array of shape (num_tracks, 4 + num_classes).
+        """Obtain the next prediction from each track.
+        Returns an array of shape (num_tracks, 4 + num_classes).
         """
         out_array = []
         if len(self.tracks) < 1:
@@ -115,23 +118,27 @@ class Tracker:
 
         # initiate new tracks
         for det_idx in unmatched_detections:
-            track = Track(start_pos=detections[det_idx], num_classes=self.num_classes, track_id=self._next_id,
-                          iou_thresh=self.min_iou_distance, time_steps=self.time_steps)
+            track = Track(
+                start_pos=detections[det_idx], num_classes=self.num_classes, track_id=self._next_id,
+                iou_thresh=self.min_iou_distance, time_steps=self.time_steps)
             self.tracks.append(track)
             self._next_id += 1
 
         # terminate older tracks
         tracks_to_remove = []
-        for i in range(len(self.tracks)):
+        buff = 0
+        for i,_ in enumerate(self.tracks):
             if self.tracks[i].time_since_match > self.max_no_hit:
-                tracks_to_remove.append(i)
+                tracks_to_remove.append(i-buff)
+                buff+=1
         for i in tracks_to_remove:
             _ = self.tracks.pop(i)
-        
         return self.tracks
 
     def initiate_tracks(self, detections):
-        # initiate new tracks
+        """
+        Initiate new tracks.
+        """
         for detection in detections:
             track = Track(start_pos=detection, num_classes=self.num_classes, track_id=self._next_id,
                           iou_thresh=self.min_iou_distance, time_steps=self.time_steps)
@@ -152,10 +159,9 @@ class Tracker:
 
             if track.state == _NO_MATCH:
                 continue
-            
-                
+
             box = track.to_tlbr()[-1, :4]  # ymin, xmin, ymax, xmax
-            assert box.shape == (4,), "invalid shape: {}".format(box.shape)
+            assert box.shape == (4,), f"invalid shape: {box.shape}"
 
             if track.state == _MATCHED:
 

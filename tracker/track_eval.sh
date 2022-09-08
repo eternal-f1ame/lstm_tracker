@@ -2,4 +2,4 @@ ROOT_PATH=$1
 CODE_HOME=$ROOT_PATH
 PYTHONPATH=PYTHONPATH:$CODE_HOME
 export PYTHONPATH
-python run_tracker.py $2 --view_tracking $3 --view_gt $4 --save_tracking $5
+python track_eval.py

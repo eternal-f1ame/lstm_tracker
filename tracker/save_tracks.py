@@ -1,17 +1,12 @@
 import numpy as np
-from matplotlib import pyplot as plt
 from tqdm import tqdm
-
 from dataset_utils.kitti_datum import KITTIDataset
 from dataset_utils.mot_datum import MOTDataset
 from tracker.tracking import Tracker, _NO_MATCH
 from trainer.dataset_info import kitti_classes_reverse
 from trainer.helpers import lbtr_to_chw, to_one_hot
 
-from vis_utils.vis_datum import datum_with_labels
-
 tracker = Tracker()
-
 
 def get_boxes_from_datum(dat, kitti=True):
     i_w, i_h = dat.image.size
@@ -25,9 +20,7 @@ def get_boxes_from_datum(dat, kitti=True):
         _boxes = lbtr_to_chw(np.array([[x.x_min / i_w, x.y_min / i_h, x.x_max / i_w, x.y_max / i_h, 0]
                                        for x in dat.objects]))
     _boxes = to_one_hot(_boxes, 9)
-
     return _boxes
-
 
 ious = []
 pbar = tqdm()
@@ -42,9 +35,8 @@ seq = dataset.sequences[6]
 
 init = 1
 
-with open(save_path.format(seq.seq_id), "a+") as fo:
+with open("/home/dark/Documents/GitHub/lstm_tracker/data/results/0006.txt","a+", encoding='utf-8') as fo:
     for frame_num, datum in tqdm(enumerate(seq.datums())):
-
         boxes = get_boxes_from_datum(dat=datum, kitti=True)
 
         if init:
