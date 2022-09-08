@@ -9,7 +9,7 @@ from vis_utils.vis_utils import draw_bounding_box_on_image
 LSTM_INFO = (
     "/home/dark/Documents/GitHub/lstm_tracker",
     "exp04",
-    "model.ckpt-645257"
+    "model.ckpt-1336975"
 )
 
 
@@ -42,7 +42,7 @@ class Tracker:
         Number of time steps
     """
 
-    def __init__(self, lstm_info=LSTM_INFO, min_iou_distance=0.2, num_classes=9, time_steps=10, max_no_hit=6):
+    def __init__(self, lstm_info=LSTM_INFO, min_iou_distance=0.1, num_classes=9, time_steps=10, max_no_hit=6):
 
         self.predictor = GraphRunner(
             base_path=lstm_info[0],
@@ -61,7 +61,7 @@ class Tracker:
         """
         out_array = []
         if len(self.tracks) < 1:
-            return np.zeros(0, 4 + self.num_classes)
+            return np.zeros((0, 4 + self.num_classes))
         for track in self.tracks:
             out_array.append(track.to_cwh())
         out_array = np.array(out_array)
@@ -127,6 +127,8 @@ class Tracker:
                 tracks_to_remove.append(i)
         for i in tracks_to_remove:
             _ = self.tracks.pop(i)
+        
+        return self.tracks
 
     def initiate_tracks(self, detections):
         # initiate new tracks

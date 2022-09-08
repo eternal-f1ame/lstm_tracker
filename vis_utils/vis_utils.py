@@ -163,6 +163,8 @@ def draw_bounding_box_on_image(image,
                 font=font)
             text_bottom -= text_height - 2 * margin
 
+    return image
+
 
 def draw_bounding_boxes_on_image_array(image,
                                        boxes,

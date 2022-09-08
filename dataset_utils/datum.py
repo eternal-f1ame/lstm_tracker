@@ -21,6 +21,7 @@ class Datum(object):
         # Placeholders for cached data
         self._rgb = None
         self._objects = None
+        self._length = None
         self._camdata = None
         self._objectmask = None
         self._classmask = None
@@ -48,6 +49,17 @@ class Datum(object):
 
         Returns:
             Path to the RGB image
+        """
+        raise NotImplementedError('To be implemented by a subclass')
+
+
+    @property
+    def length(self):
+        """
+        number of objects in the RGB image
+
+        Returns:
+            int number
         """
         raise NotImplementedError('To be implemented by a subclass')
 

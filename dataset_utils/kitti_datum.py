@@ -30,6 +30,10 @@ class KITTIDatum(Datum):
             self._objects = [KITTIObj.deserialize(line.strip()) for line in self.gt]
         return self._objects
 
+    @property
+    def length(self):
+        return len(self._objects)
+
 
 class KITTISequence(Dataset):
     """
@@ -45,6 +49,7 @@ class KITTISequence(Dataset):
         """
         _ids = sorted(os.listdir(os.path.join(root_path, 'image_02', seq_id)))
         self._all_img_ids = [x for x in _ids if x.endswith((".jpg", ".png")) and not x.startswith(".")]
+        self.length = len(self._all_img_ids)
         self._gt = defaultdict(list)
         self.seq_id = seq_id
         with open("{}/label_02/{}.txt".format(root_path, seq_id)) as fo:
@@ -61,6 +66,9 @@ class KITTISequence(Dataset):
     @property
     def all_img_ids(self):
         return self._all_img_ids
+
+    def length(self):
+        return self.length
 
     def create_datum(self, img_id: str) -> Datum:
         image_dir = os.path.join(self.root_path, "image_02", self.seq_id)
