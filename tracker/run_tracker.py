@@ -27,28 +27,25 @@ path_text = os.path.join(PATH_TEXT, "exp",sub_dir)
 
 ious = []
 INIT = 1
-
+FEED = 0
 path = f"{path_text}/labels"
+TRACKED = False
 frames = []
 paths = []
-for ind, file_name in enumerate(sorted(os.listdir(path))):
+i = 0
+while True:
+    print(i, "WHILE")
+    file_name = str(i).zfill(6)+".txt"
     with open(f"{path}/{file_name}", "r", encoding="utf-8") as f:
         a = f.readlines()
-    for i, e in enumerate(a):
-        a[i] = a[i].replace("\n", "")
-        a[i] = a[i].split()
+    for ind, e in enumerate(a):
+        a[ind] = a[ind].replace("\n", "")
+        a[ind] = a[ind].split()
+
 
     a = np.array(a)
     a = a.astype("float")
-    paths.append(
-        f"{path_source}/{str(ind).zfill(6)}.png")
-
-    frames.append(a)
-
-TRACKED = False
-
-for i, _ in enumerate(frames):
-    boxes = frames[i]
+    boxes = a
 
     if INIT:
         tracker.initiate_tracks(boxes)
@@ -60,13 +57,35 @@ for i, _ in enumerate(frames):
         
         
         """)
+        print(i, "INIT")
+
         continue
 
+    path_im = f"{path_source}/{str(i).zfill(6)}.png"
     preds = tracker.predict()
 
     tracks = tracker.update(detections=boxes, predictions=preds)
 
-    im = Image.open(paths[i])
+    with open("../COMM", "w", encoding="utf-8") as f:
+        f.write(str(i+1))
+
+    with open("../FEED",'r',encoding="utf-8") as f:
+        try:
+            FEED = int(f.read())
+        except:
+            pass
+    
+    while FEED-1<i and FEED != -1:
+        try:
+            with open("../FEED",'r',encoding="utf-8") as f:
+                FEED = int(f.read())
+            continue
+        except Exception as _e:
+            continue
+
+
+
+    im = Image.open(path_im)
     tracker.draw_tracks(im)
 
     if args.save_tracking:
@@ -82,7 +101,7 @@ for i, _ in enumerate(frames):
                 'a+',encoding='utf-8') as f:
                 f.write(out_str)
 
-    im_orig = Image.open(paths[i])
+    im_orig = Image.open(path_im)
     for box in boxes:
         b_0 = box[0]-box[2]/2
         b_1 = box[1]-box[3]/2
@@ -94,6 +113,13 @@ for i, _ in enumerate(frames):
         cv2.imshow("Tracking", np.array(im))#cv2.resize(np.array(im),(1280,800)))
 
     if args.view_gt:
+        print(path_im)
         cv2.imshow("Ground truth", np.array(im_orig))#cv2.resize(np.array(im_orig),(1280,800)))
 
     cv2.waitKey(1)
+    i += 1
+    if FEED == -1:
+        with open("../COMM", "w", encoding="utf-8") as f:
+            f.write(str(0))
+
+        break
