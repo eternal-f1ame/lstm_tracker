@@ -1,4 +1,5 @@
 import os
+import shutil
 import argparse
 import tensorflow as tf
 from PIL import Image
@@ -33,93 +34,99 @@ TRACKED = False
 frames = []
 paths = []
 i = 0
-while True:
-    print(i, "WHILE")
-    file_name = str(i).zfill(6)+".txt"
-    with open(f"{path}/{file_name}", "r", encoding="utf-8") as f:
-        a = f.readlines()
-    for ind, e in enumerate(a):
-        a[ind] = a[ind].replace("\n", "")
-        a[ind] = a[ind].split()
 
+try:
+    while True:
 
-    a = np.array(a)
-    a = a.astype("float")
-    boxes = a
+        file_name = str(i).zfill(6)+".txt"
+        with open(f"{path}/{file_name}", "r", encoding="utf-8") as f:
+            a = f.readlines()
 
-    if INIT:
-        tracker.initiate_tracks(boxes)
-        INIT = 0
-        print("""
-        
+        for ind, e in enumerate(a):
+            a[ind] = a[ind].replace("\n", "")
+            a[ind] = a[ind].split()
 
-        Initiated tracks
-        
-        
-        """)
-        print(i, "INIT")
+        a = np.array(a)
+        a = a.astype("float")
+        boxes = a
 
-        continue
+        if INIT:
+            tracker.initiate_tracks(boxes)
+            INIT = 0
+            print("""
+            
 
-    path_im = f"{path_source}/{str(i).zfill(6)}.png"
-    preds = tracker.predict()
+            Initiated tracks
+            
+            
+            """)
+            continue
 
-    tracks = tracker.update(detections=boxes, predictions=preds)
+        path_im = f"{path_source}/{str(i).zfill(6)}.png"
+        preds = tracker.predict()
+        tracks = tracker.update(detections=boxes, predictions=preds)
 
-    with open("../COMM", "w", encoding="utf-8") as f:
-        f.write(str(i+1))
+        with open("../COMM", "w", encoding="utf-8") as f:
+            f.write(str(i+1))
 
-    with open("../FEED",'r',encoding="utf-8") as f:
-        try:
-            FEED = int(f.read())
-        except:
-            pass
-    
-    while FEED-1<i and FEED != -1:
-        try:
-            with open("../FEED",'r',encoding="utf-8") as f:
+        with open("../FEED",'r',encoding="utf-8") as f:
+            try:
                 FEED = int(f.read())
-            continue
-        except Exception as _e:
-            continue
+            except Exception as _e:
+                pass
 
-
-
-    im = Image.open(path_im)
-    tracker.draw_tracks(im)
-
-    if args.save_tracking:
-        for track in tracks:
-
-            if track.state == _NO_MATCH:
+        while FEED-1<i and FEED != -1:
+            try:
+                with open("../FEED",'r',encoding="utf-8") as f:
+                    FEED = int(f.read())
+                continue
+            except Exception as _e:
                 continue
 
-            tracks_pos = track.to_tlbr()[-1, :4]
-            out_str = f"{i} {track.track_id}"+" {} {} {} {} \n".format(*tracks_pos)
-            with open(
-                f'../data/results/{sub_dir}.txt',
-                'a+',encoding='utf-8') as f:
-                f.write(out_str)
 
-    im_orig = Image.open(path_im)
-    for box in boxes:
-        b_0 = box[0]-box[2]/2
-        b_1 = box[1]-box[3]/2
-        b_2 = box[0]+box[2]/2
-        b_3 = box[1]+box[3]/2
-        draw_bounding_box_on_image(im_orig, b_1, b_0, b_3, b_2, use_normalized_coordinates=True)
 
-    if args.view_tracking:
-        cv2.imshow("Tracking", np.array(im))#cv2.resize(np.array(im),(1280,800)))
+        im = Image.open(path_im)
+        tracker.draw_tracks(im)
 
-    if args.view_gt:
-        print(path_im)
-        cv2.imshow("Ground truth", np.array(im_orig))#cv2.resize(np.array(im_orig),(1280,800)))
+        if args.save_tracking:
+            for track in tracks:
 
-    cv2.waitKey(1)
-    i += 1
-    if FEED == -1:
-        with open("../COMM", "w", encoding="utf-8") as f:
-            f.write(str(0))
+                if track.state == _NO_MATCH:
+                    continue
 
-        break
+                tracks_pos = track.to_tlbr()[-1, :4]
+                out_str = f"{i} {track.track_id}"+" {} {} {} {} \n".format(*tracks_pos)
+                with open(
+                    f'../tracker_testing/results/{sub_dir}.txt',
+                    'a+',encoding='utf-8') as f:
+                    f.write(out_str)
+
+        im_orig = Image.open(path_im)
+        for box in boxes:
+            b_0 = box[0]-box[2]/2
+            b_1 = box[1]-box[3]/2
+            b_2 = box[0]+box[2]/2
+            b_3 = box[1]+box[3]/2
+            draw_bounding_box_on_image(im_orig, b_1, b_0, b_3, b_2, use_normalized_coordinates=True)
+
+        if args.view_tracking:
+            cv2.imshow("Tracking", np.array(im))#cv2.resize(np.array(im),(1280,800)))
+
+        if args.view_gt:
+            print(path_im)
+            cv2.imshow("Ground truth", np.array(im_orig))#cv2.resize(np.array(im_orig),(1280,800)))
+
+        cv2.waitKey(1)
+        i += 1
+        if FEED == -1:
+            with open("../COMM", "w", encoding="utf-8") as f:
+                f.write(str(0))
+
+            break
+
+except KeyboardInterrupt:
+    with open("../COMM", "w", encoding="utf-8") as f:
+        f.write(str(0))
+    os.remove(f'../tracker_testing/results/{sub_dir}.txt')
+
+#EOF

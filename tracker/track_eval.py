@@ -10,7 +10,7 @@ dataset = KITTIDataset(root_path="{}/data/KITTI_tracking/data_tracking_image_2/t
 
 save_path = "{}/data/results/{}/{}".format(BASE_PATH, "KITTI", "{}.txt")
 
-track_seq = TrackObjHandler("{}/data/results".format(BASE_PATH), "0000")
+track_seq = TrackObjHandler("{}/tracker_testing/results".format(BASE_PATH), "0000")
 gt_seq = dataset.sequences[0]
 
 acc = mm.MOTAccumulator(auto_id=True)

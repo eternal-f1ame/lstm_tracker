@@ -1,13 +1,18 @@
 # LSTSM Multi Object Tracking Tracking
 
-## Running Different Funcions
+## Requirenments
 
-## Folder Architectures
+* Anaconda3/Miniconda3
 
-### Ground Truth Folders
+* Tensorflow 2.9
+* Pytorch (latest)
 
-* 
-## * Training The LSTM Tracker
+
+```Terminal
+pip install -r requirements.txt
+```
+
+## Training The LSTM Tracker
 
 ### Open a Terminal and Navigate to the training folder
 
@@ -17,9 +22,52 @@ chmod +x train.sh #(only needed the first time)
 train.sh <PATH>/lstm_tracker/
 ```
 
-### * Running an Inference with the Tracker
+## Running an Inference with the Tracker
 
 ```Terminal
+cd <PATH>/lstm_tracker/tracker/
+chmod +x run_tracker.sh #(only needed the first time)
+run_tracker.sh <PATH>/lstm_tracker/ <PATH>/lstm_tracker/tracker_testing/data/<FOLDER>
+```
 
+* `<FOLDER>` should have frame wise txt file in a sub folder named `labels`
+
+## Real Time Tracking
+
+* Open a Terminal window
+
+```Terminal
+cd <PATH>/lstm_tracker/yolo/
+python detect.py --project <PATH>/lstm_tracker/tracker_testing/ --source <PATH>/lstm_tracker/tracker_testing/data/<FOLDER> --save-txt
+```
+
+* Here `<FOLDER>` is the directory which contains the videos in form of frames.
+* Open a new Terminal window
+
+```Terminal
+cd <PATH>/lstm_tracker/tracker/
+chmod +x run_tracker.sh #(only needed the first time)
+run_tracker.sh <PATH>/lstm_tracker/ <PATH>/lstm_tracker/tracker_testing/data/<FOLDER>
 
 ```
+
+* `<FOLDER>` is same as in the previous command
+
+## Results
+
+* The video with GT boxes is stored in `<PATH>/lstm_tracker/tracker_testing/exp/FOLDER` and GT boxes coordinates are stored in `<PATH>/lstm_tracker/tracker_testing/exp/FOLDER/labels/` (in a frame wise .txt file format)
+* Results of MOT are stored in `<PATH>/lstm_tracker/tracker_testing/results/FOLDER.txt`
+
+### Evaluation
+
+* Evaluation for KITTI Test Dataset
+* Open a Terminal window
+
+```Terminal
+cd <PATH>/lstm_tracker
+chmod +x track_eval.sh #(only needed for the first time)
+track_eval.sh <PATH>/lstm_tracker/
+
+```
+
+* The Evaluation Result is displayed in the Terminal window
