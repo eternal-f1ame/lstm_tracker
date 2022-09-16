@@ -9,7 +9,7 @@ from vis_utils.vis_utils import draw_bounding_box_on_image
 LSTM_INFO = (
     "/home/dark/Documents/GitHub/lstm_tracker",
     "exp04",
-    "model.ckpt-1336975"
+    "model.ckpt-1004404"
 )
 
 

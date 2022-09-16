@@ -1,5 +1,7 @@
 models/
 data/
+exp/
+results/
 .jpg
 .avi
 .mp4

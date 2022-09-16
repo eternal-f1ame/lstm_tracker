@@ -55,11 +55,11 @@ def run_init():
         path="{}/data/KITTI_tracking/data_tracking_image_2/training".format(base_path),
         o_path="{}/data/kitti_tracks_{}.json".format(base_path, "{}")
     )
-    init_track_json(
-        kind="MOT",
-        path="{}/data/MOT16/train".format(base_path),
-        o_path="{}/data/mot_tracks_{}.json".format(base_path, "{}")
-    )
+    # init_track_json(
+    #     kind="MOT",
+    #     path="{}/data/MOT16/train".format(base_path),
+    #     o_path="{}/data/mot_tracks_{}.json".format(base_path, "{}")
+    # )
 
 
 def kitti_data_gen(path="/home/dark/Documents/GitHub/lstm_tracker/data/kitti_tracks_{}.json",

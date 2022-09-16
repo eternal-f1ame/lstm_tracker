@@ -1,17 +1,24 @@
 import motmetrics as mm
 import numpy as np
+import argparse
 from dataset_utils.kitti_datum import KITTIDataset
 from dataset_utils.track_datum import TrackObjHandler
 
-BASE_PATH = "/home/dark/Documents/GitHub/lstm_tracker"
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    'eval_dir', action='store' , type=str,
+    help='Directory containing all the frames to use'
+    )
+eval_dir = parser.parse_args().eval_dir
+seq_eval = int(eval_dir)
+
+BASE_PATH = ".."
 
 dataset = KITTIDataset(root_path="{}/data/KITTI_tracking/data_tracking_image_2/training".format(BASE_PATH))
 # dataset = MOTDataset(root_path="{}/data/MOT16/train".format(BASE_PATH))
 
-save_path = "{}/data/results/{}/{}".format(BASE_PATH, "KITTI", "{}.txt")
-
-track_seq = TrackObjHandler("{}/tracker_testing/results".format(BASE_PATH), "0000")
-gt_seq = dataset.sequences[0]
+track_seq = TrackObjHandler("{}/tracker_testing/results".format(BASE_PATH), eval_dir)
+gt_seq = dataset.sequences[seq_eval]
 
 acc = mm.MOTAccumulator(auto_id=True)
 
@@ -34,8 +41,8 @@ for i, gt in enumerate(gt_seq.datums()):
     acc.update(gt_ids, track_ids, iou_dist)
 
 mh = mm.metrics.create()
-summary = mh.compute(acc, metrics=['num_frames', 'mota', 'motp', 'mostly_tracked', 'mostly_lost',
-                                   'num_switches', 'num_matches', 'num_objects'], name='acc')
+summary = mh.compute(acc, metrics=['num_frames', 'mota', 'motp', 'mostly_tracked', 'mostly_lost','partially_tracked',
+                                   'num_switches', 'num_matches', 'num_objects','precision','recall','idp','idr'], name='acc')
 pretty_summary = mm.io.render_summary(
     summary,
     formatters=mh.formatters,

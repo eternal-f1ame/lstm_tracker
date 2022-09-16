@@ -2,4 +2,4 @@ ROOT_PATH=$1
 CODE_HOME=$ROOT_PATH
 PYTHONPATH=PYTHONPATH:$CODE_HOME
 export PYTHONPATH
-python save_tracks.py
+python save_tracks.py $2

@@ -177,7 +177,7 @@ def run(
 
                     # Write results
                     for *xyxy, conf, cls in reversed(det):
-                        clas = torch.nn.functional.one_hot(torch.tensor(1).to(torch.int64), 9)
+                        clas = torch.nn.functional.one_hot(cls.to(torch.int64), 9)
                         if save_txt:  # Write to file
                             xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                             line = (*xywh, *clas,  conf) if save_conf else (*xywh, *clas)# label format
