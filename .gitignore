@@ -1,10 +1,7 @@
 models/
 data/KITTI/
 data/MOT16/
-trainer/__pycache__/
-tracker/__pycache__/
-tracker_testing/__pycache__/
-vis_utils/__pycache__/
+__pycache__/
 yolo/
 .jpg
 .avi
