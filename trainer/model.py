@@ -67,12 +67,6 @@ def create_model(timesteps=None, input_dim=4, num_classes=9, hidden_sizes=(32, 3
 
     model = tf.keras.Model(inputs=inputs, outputs=outputs, name="lstm_model")
 
-    # model.compile(
-    #     optimizer=tf.keras.optimizers.Adam(lr=0.001),
-    #     loss=tf.keras.losses.mean_squared_error,
-    #     metrics=[tf.keras.metrics.mean_squared_error]
-    # )
-
     return model
 
 
@@ -186,15 +180,12 @@ def model_fn(features, labels, mode, params, config):
 
 
 def get_dataset(gen=None,
-                data_path="/home/dark/Documents/GitHub/lstm_tracker/data/KITTI_tracking/generate/tracks.json",
+                data_path="../data/MOTA/",
                 mode="train",
                 num_classes=9,
                 num_epochs=100,
                 batch_size=10,
                 prefetch_size=10):
-    # def gen():
-    #     temp = kitti_data_gen(path=data_path, split=mode)
-    #     yield next(temp)
 
     dat = tf.data.Dataset.from_generator(generator=gen,
                                          output_types=(tf.float32, tf.float32),

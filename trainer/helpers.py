@@ -1,10 +1,9 @@
 import numpy as np
 import tensorflow as tf
+
+from trainer.data import MOTA_to_train
 tf = tf.compat.v1
 from matplotlib import pyplot as plt
-
-
-from trainer.data import kitti_data_gen, mot_data_gen
 from vis_utils.vis_datum import ImageBoxes
 
 _TENSORS_TO_LOG = dict((x, x) for x in ['learning_rate',
@@ -253,10 +252,7 @@ class SaveImages(tf.train.SessionRunHook):
 
     def __init__(self, model, dataset, count=10):
         self.model = model
-        if dataset == "KITTI":
-            self.gen = kitti_data_gen
-        else:
-            self.gen = mot_data_gen
+        self.gen = MOTA_to_train
         self.y_pred = []
         self.data = []
         self.count = count

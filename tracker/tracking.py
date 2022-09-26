@@ -9,7 +9,7 @@ from vis_utils.vis_utils import draw_bounding_box_on_image
 LSTM_INFO = (
     "/home/dark/Documents/GitHub/lstm_tracker",
     "exp04",
-    "model.ckpt-1004404"
+    "model.ckpt-1226923"
 )
 
 
@@ -43,7 +43,7 @@ class Tracker:
     """
 
     def __init__(
-        self, lstm_info=LSTM_INFO, min_iou_distance=0.1,num_classes=9, time_steps=10, max_no_hit=6
+        self, lstm_info=LSTM_INFO, min_iou_distance=0.05,num_classes=9, time_steps=10, max_no_hit=6
         ):
 
         self.predictor = GraphRunner(
@@ -68,6 +68,7 @@ class Tracker:
         for track in self.tracks:
             out_array.append(track.to_cwh())
         out_array = np.array(out_array)
+        print(out_array[0])
         predictions = self.predictor.get_predictions(out_array)
 
         return np.concatenate([predictions, out_array[:, -1, 4:]], axis=-1)

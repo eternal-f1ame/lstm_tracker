@@ -38,8 +38,9 @@ class Track:
 
     """
 
-    def __init__(self, start_pos, num_classes, track_id, iou_thresh=0.1, time_steps=10):
+    def __init__(self, start_pos, num_classes, track_id, iou_thresh=0.05, time_steps=10):
         self.pos_data = np.zeros(shape=(time_steps, 4 + num_classes))
+        print(start_pos)
         self.pos_data[-1, :] = start_pos
         self.track_id = track_id
 
@@ -76,6 +77,7 @@ class Track:
         ret[:, 1], ret[:, 0] = ret[:, 0] - _W, ret[:, 1] - _H
 
         return ret
+
 
     def update(self, detection, prediction, iou=None):
         """Update internal parameters with a new detection

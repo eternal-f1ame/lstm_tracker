@@ -33,6 +33,7 @@ import numpy as np
 
 import torch
 import torch.backends.cudnn as cudnn
+CUDA_LAUNCH_BLOCKING=1
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
@@ -139,7 +140,6 @@ def run(
                 try:
                     with open("../COMM",'r',encoding="utf-8") as f:
                         COMM = int(f.read())
-                    continue
                 except Exception as _e:
                     continue
 
@@ -177,19 +177,20 @@ def run(
 
                     # Write results
                     for *xyxy, conf, cls in reversed(det):
-                        clas = torch.nn.functional.one_hot(cls.to(torch.int64), 9)
-                        if save_txt:  # Write to file
-                            xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                            line = (*xywh, *clas,  conf) if save_conf else (*xywh, *clas)# label format
-                            with open(f'{txt_path}.txt', 'a') as f:
-                                f.write(('%g ' * len(line)).rstrip() % line + '\n')
+                        if cls.to(torch.int64) < 3:
+                            clas = torch.nn.functional.one_hot(cls.to(torch.int64), 9)
+                            if save_txt:  # Write to file
+                                xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                                line = (*xywh, *clas,  conf) if save_conf else (*xywh, *clas)# label format
+                                with open(f'{txt_path}.txt', 'a') as f:
+                                    f.write(('%g ' * len(line)).rstrip() % line + '\n')
 
-                        if save_img or save_crop or view_img:  # Add bbox to image
-                            c = int(cls)  # integer class
-                            label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-                            annotator.box_label(xyxy, label, color=colors(c, True))
-                        if save_crop:
-                            save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
+                            if save_img or save_crop or view_img:  # Add bbox to image
+                                c = int(cls)  # integer class
+                                label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
+                                annotator.box_label(xyxy, label, color=colors(c, True))
+                            if save_crop:
+                                save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
 
                 # Stream results
                 im0 = annotator.result()
