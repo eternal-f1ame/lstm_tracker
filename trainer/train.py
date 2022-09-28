@@ -75,16 +75,15 @@ def main(_):
     val_hooks = [get_logging_tensor_hook(every_n_iter=1000, tensors_to_log={'eval_precision': 'eval_precision'})]
     tf.logging.set_verbosity(tf.logging.INFO)
 
-    # train and eval
-    train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, hooks=hooks,max_steps=1000000)
-    eval_spec = tf.estimator.EvalSpec(input_fn=val_input_fn, steps=None, throttle_secs=int(args.eval_int),
-                                      hooks=val_hooks)
-
+    #train
     classifier.train(
         train_input_fn
     )
                         
-
+    # train and eval
+    # train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn, hooks=hooks,max_steps=1000000)
+    # eval_spec = tf.estimator.EvalSpec(input_fn=val_input_fn, steps=None, throttle_secs=int(args.eval_int),
+    #                                   hooks=val_hooks)
     # tf.estimator.train_and_evaluate(estimator=classifier,
     #                                 train_spec=train_spec,
     #                                 eval_spec=eval_spec)

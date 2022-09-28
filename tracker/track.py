@@ -40,10 +40,8 @@ class Track:
 
     def __init__(self, start_pos, num_classes, track_id, iou_thresh=0.05, time_steps=10):
         self.pos_data = np.zeros(shape=(time_steps, 4 + num_classes))
-        print(start_pos)
         self.pos_data[-1, :] = start_pos
         self.track_id = track_id
-
         self.iou_thresh = iou_thresh
         self.hits = 1
         self.age = 1

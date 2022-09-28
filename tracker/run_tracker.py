@@ -58,7 +58,8 @@ if real_time > -1:
         line_arr = np.array([line.rstrip().split() for line in lines]).astype(float)
         boxes_arr = defaultdict(dict)
         for i in range(int(max(line_arr[:,0]))):
-            boxes_arr[i] = line_arr[line_arr[:,0]==i][:,1:]
+            boxes_arr[i] = line_arr[line_arr[:,0]==i][:,2:]
+    f.close()
 
 
 i = 0
@@ -79,12 +80,11 @@ try:
 
                 a = np.array(a)
                 a = a.astype("float")
-                boxes = a
+                boxes = np.c_[a[:,0:-1],tf.one_hot(a[:,-1],depth=9).numpy()]
                 objects = True
             except:
                 objects = False
                 pass
-            
 
 
             with open("../COMM", "w", encoding="utf-8") as f:
@@ -107,7 +107,7 @@ try:
         else:
             try:
 
-                boxes = boxes_arr[i]
+                boxes = np.c_[boxes_arr[i][:,0:-1],tf.one_hot(boxes_arr[i][:,-1],depth=9).numpy()]
                 objects = True
             except:
                 objects = False
@@ -142,7 +142,7 @@ try:
                     if track.state == _NO_MATCH:
                         continue
 
-                    tracks_pos = track.to_tlbr()[-1, :4]
+                    tracks_pos = track.to_cwh()[-1, :4]
                     out_str = f"{i} {track.track_id}"+" {} {} {} {} \n".format(*tracks_pos)
                     with open(
                         f'../tracker_testing/results/{sub_dir}.txt',
@@ -162,7 +162,6 @@ try:
             out.write(np.array(im))
 
         if args.view_gt:
-            print(path_im)
             cv2.imshow("Ground truth", np.array(im_orig))#cv2.resize(np.array(im_orig),(1280,800)))
 
         cv2.waitKey(1)

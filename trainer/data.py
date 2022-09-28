@@ -1,6 +1,6 @@
 import os
 from collections import defaultdict
-
+import random
 import numpy as np
 import tensorflow as tf
 tf = tf.compat.v1
@@ -11,7 +11,9 @@ from vis_utils.vis_datum import ImageBoxes
 
 def MOTA_to_train(path="../data/MOTA/",
                  split="train", testing=False, one_hot_classes=False, anchors=False, num_classes=9):
-    for file_name in os.listdir(path):
+    path_l = os.listdir(path)
+    random.shuffle(path_l)
+    for file_name in path_l:
         text_file = open(path+file_name,"r",encoding="utf-8").read().splitlines()
         tracks = defaultdict(dict)
         text_file_arr = np.array([line.rstrip().split() for line in text_file]).astype(float)
