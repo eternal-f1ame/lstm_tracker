@@ -1,7 +1,5 @@
-models/
 data/KITTI/
 data/MOT16/
-tracker_testing/*
 __pycache__/
 yolo/
 .jpg
